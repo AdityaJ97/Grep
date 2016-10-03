@@ -1,0 +1,3 @@
+do -l command
+do -w command
+do -e command

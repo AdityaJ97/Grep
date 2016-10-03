@@ -20,11 +20,19 @@ int main(int argc, char *argv[]) {
 	}
 	if(strcmp(argv[1],"-r") == 0) {
 		DIR *dir;
-   		dir=opendir(argv[3]);
+   		dir = opendir(argv[3]);
   		struct dirent *dent;
   		if(dir!=NULL) {
        			while((dent = readdir(dir))) {
-				if(f[i] = open(dent->d_name, O_RDONLY)) {
+					if(dent->d_type == DT_DIR) {
+						if(strcmp(dent->d_name, ".") == 0 || strcmp(dent->d_name, "..") == 0);
+						else  {
+							strcat(argv[3], "/");
+							strcat(argv[3], dent->d_name);
+							recursive(argv[3], argv[2]);
+						}
+					}
+				if(f[i] = open(dent->d_name, O_RDONLY)) { 
 					size[i] = lseek(f[i], 0, SEEK_END);
 					a = (char*)malloc(size[i]*sizeof(char));
 					lseek(f[i], 0, 0);	
@@ -36,37 +44,14 @@ int main(int argc, char *argv[]) {
 						}
 						token = mystrtok(NULL, s, i);
   	 				}
-					close(f[i]);
-					free (a);
+				close(f[i]);
+				free (a);
 				}
-				else { 
-					DIR *dir_1;
-					struct dirent *dent_1;
-					dir_1 = opendir(dent->d_name);
-					while((dent=readdir(dir_1))) {
-						if(f[i] = open(dent->d_name, O_RDONLY)) {
-							size[i] = lseek(f[i], 0, SEEK_END);
-							a = (char*)malloc(size[i]*sizeof(char));
-							lseek(f[i], 0, 0);	
-							read(f[i], a, size[i]*sizeof(char));
-   							token = mystrtok(a, s, i);
- 							while( token != NULL ) { 
-								if(mystrstr( token, argv[2]) != NULL) {
-									printf("%s%s/%s%s:%s%s\n", KMAG, argv[3], dent->d_name, KBLU, KNRM, token);
-								}
-							token = mystrtok(NULL, s, i);
-  	 						}
-						close(f[i]);
-						free (a);
-						}
-					i++;
-    					}
-    				}
 			i++;
-    			}
+			}
+           		closedir(dir);
+			return 0;
 		}
-           	closedir(dir);
-		return 0;
 	}
 	else if(strcmp(argv[1],"-v") == 0 || strcmp(argv[1],"-vn") == 0) {
 		for(i = 1; i <= 5; i++) {
