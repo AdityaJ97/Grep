@@ -2,7 +2,7 @@
 **** Aditya Jadhav ****
 **** 111503002 ****
 # Grep
-The Grep command in Linux.
+*The Grep command in Linux.*
 Usage: ./project [OPTION] PATTERN [FILE]...
 Search for PATTERN in each FILE
 Commands Completed :
