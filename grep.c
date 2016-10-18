@@ -14,7 +14,7 @@ int main(int argc, char *argv[]) {
 	char s[2] = "\n";
    	char *token;
 	if(strcmp(argv[1],"-h") == 0) {
-		printf("Usage: grep [OPTION] PATTERN [FILE]...\nSearch for PATTERN in each FILE\n-i, --ignore-case         ignore case distinctions\n-v, --invert-match        select non-matching lines\n-n, --line-number         print line number with output lines\n-r, --recursive           like --directories=recurse\n-c, --count               print only a count of matching lines per FILE\n-in, --ignore-case         ignore case distinctions & print line number with output lines\n-vn, --invert-match        select non-matching lines & print line number with output lines\n-cv, --count               print only a count of non-matching lines per FILE\n");
+		printf("Usage: ./project [OPTION] PATTERN [FILE]...\nSearch for PATTERN in each FILE\n-i  ignore case distinctions\n-v  select non-matching lines\n-n  print line number with output lines\n-r  traverse through directories nd grep\n-c  print only a count of matching lines per FILE\n-in  ignore case distinctions & print line number with output lines\n-vn  select non-matching lines & print line number with output lines\n-cv print only a count of non-matching lines per FILE\n");
 	}
 	else if(argc < 3) {
 		errno = EINVAL;
