@@ -3,8 +3,8 @@
 #include <stdio.h>
 char *mystrtok(char *a, char *de, int x) {
 	static char *c;
-	static int j[5] = {0, 0, 0, 0, 0};
-	static int i[5] = {0, 0, 0, 0, 0};
+	static int j[10] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+	static int i[10] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 	int p = 0;
 	if(a != NULL) {
 		c = a;

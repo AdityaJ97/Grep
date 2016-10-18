@@ -13,26 +13,31 @@ int main(int argc, char *argv[]) {
 	char *a;	
 	char s[2] = "\n";
    	char *token;
-	if(argc < 3) {
+	if(strcmp(argv[1],"-h") == 0) {
+		printf("Usage: grep [OPTION] PATTERN [FILE]...\nSearch for PATTERN in each FILE\n-i, --ignore-case         ignore case distinctions\n-v, --invert-match        select non-matching lines\n-n, --line-number         print line number with output lines\n-r, --recursive           like --directories=recurse\n-c, --count               print only a count of matching lines per FILE\n-in, --ignore-case         ignore case distinctions & print line number with output lines\n-vn, --invert-match        select non-matching lines & print line number with output lines\n-cv, --count               print only a count of non-matching lines per FILE\n");
+	}
+	else if(argc < 3) {
 		errno = EINVAL;
 		perror("Bad arguments");
 		return errno; 
 	}
 	if(strcmp(argv[1],"-r") == 0) {
 		DIR *dir;
+		char dname[32];
    		dir = opendir(argv[3]);
   		struct dirent *dent;
   		if(dir!=NULL) {
        			while((dent = readdir(dir))) {
-					if(dent->d_type == DT_DIR) {
-						if(strcmp(dent->d_name, ".") == 0 || strcmp(dent->d_name, "..") == 0);
-						else  {
-							strcat(argv[3], "/");
-							strcat(argv[3], dent->d_name);
-							recursive(argv[3], argv[2]);
-						}
+				if(dent->d_type == DT_DIR) {
+					if(strcmp(dent->d_name, ".") == 0 || strcmp(dent->d_name, "..") == 0);
+					else  {
+						strcpy(dname, argv[3]);
+						strcat(dname, "/");
+						strcat(dname, dent->d_name);
+						recursive(dname, argv[2]);
 					}
-				if(f[i] = open(dent->d_name, O_RDONLY)) { 
+				}
+				else if(f[i] = open(dent->d_name, O_RDONLY)) { 
 					size[i] = lseek(f[i], 0, SEEK_END);
 					a = (char*)malloc(size[i]*sizeof(char));
 					lseek(f[i], 0, 0);	
@@ -47,7 +52,7 @@ int main(int argc, char *argv[]) {
 				close(f[i]);
 				free (a);
 				}
-			i++;
+				i++;
 			}
            		closedir(dir);
 			return 0;

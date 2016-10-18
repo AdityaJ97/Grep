@@ -1,3 +1,7 @@
 do -l command
 do -w command
 do -e command
+do -h
+do -H
+do -b
+do only for grep [PATTERN]....infinite inputs
