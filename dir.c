@@ -32,12 +32,12 @@ void recursive(char *dname, char *search) {
 					a = (char*)malloc(size[i]*sizeof(char));
 					lseek(f[i], 0, 0);	
 					read(f[i], a, size[i]*sizeof(char));
-   					token = strtok(a, s/*, i*/);
+   					token = strtok(a, s);
  					while( token != NULL ) { 
 						if(mystrstr( token, search) != NULL) {
 							printf("%s%s/%s%s:%s%s\n", KMAG, dname, dent->d_name, KBLU, KNRM, token);
 						}
-						token = strtok(NULL, s/*, i*/);
+						token = strtok(NULL, s);
    					}
 				close(f[i]);
 				free (a);

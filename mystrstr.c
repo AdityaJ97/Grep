@@ -17,7 +17,7 @@ char *mystrstr (char *a, char *b) {
 		}
 	}
 	if(*q == '\0')
-		return a;
+		return p;
 	else 
 		return NULL;
 }

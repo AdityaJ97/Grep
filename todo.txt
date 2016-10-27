@@ -4,4 +4,3 @@ do -e command
 do -h
 do -H
 do -b
-do only for grep [PATTERN]....infinite inputs
