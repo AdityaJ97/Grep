@@ -1,3 +1,21 @@
+/*****************************************************************************
+ * Copyright (C) Aditya.K.Jadhav  aj7744904623@gmail.com
+ *
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program; if not, see <http://www.gnu.org/licenses/>
+ *****************************************************************************/
+
+
 #include <stdio.h>
 #include <sys/types.h> 
 #include <sys/stat.h> 
@@ -6,6 +24,7 @@
 #include <unistd.h> 
 #include <errno.h>
 #include <string.h>
+#include <ctype.h>
 #include <dirent.h>     
 #include "header.h"
 int main(int argc, char *argv[]) {
@@ -17,7 +36,7 @@ int main(int argc, char *argv[]) {
 		printf("Use ./project -h command for usage\n");
 		exit(1);
 	}
-	else if(strcmp(argv[1],"-h") == 0) {
+	else if(strcmp(argv[1],"-h") == 0 && argv[2] == NULL) {
 		usage();
 		exit(1);
 	}
@@ -33,7 +52,7 @@ int main(int argc, char *argv[]) {
 			standard_options(argv[1], argv[2]);
 		exit(1);
 	}	
-	if(strcmp(argv[1],"-r") == 0) {
+	if(strcmp(argv[1],"-r") == 0 || strcmp(argv[1], "-ri") == 0 || strcmp(argv[1], "-rv") == 0) {
 		DIR *dir;
 		char dname[32];
    		dir = opendir(argv[3]);
@@ -46,7 +65,12 @@ int main(int argc, char *argv[]) {
 						strcpy(dname, argv[3]);
 						strcat(dname, "/");
 						strcat(dname, dent->d_name);
-						recursive(dname, argv[2]);
+						if(strcmp(argv[1], "-r") == 0)
+							recursive(dname, argv[2], 0);
+						if(strcmp(argv[1], "-ri") == 0)
+							recursive(dname, argv[2], 1);
+						if(strcmp(argv[1], "-rv") == 0)
+							recursive(dname, argv[2], 2);
 					}
 				}
 				else if(f[i] = open(dent->d_name, O_RDONLY)) { 
@@ -56,7 +80,7 @@ int main(int argc, char *argv[]) {
 					read(f[i], a, size[i]*sizeof(char));
    					token = mystrtok_multi(a, s, i);
  					while( token != NULL ) { 
-						if(mystrstr( token, argv[2]) != NULL) {
+						if((mystrstr(token, argv[2]) != NULL && strcmp(argv[1], "-r") == 0) || (mystrstrcase(token, argv[2]) != NULL && strcmp(argv[1], "-ri") == 0) || (mystrstr(token, argv[2]) == NULL && strcmp(argv[1], "-rv") == 0) ) {
 							printf("%s%s/%s%s:%s%s\n", KMAG, argv[3], dent->d_name, KBLU, KNRM, token);
 						}
 						token = mystrtok_multi(NULL, s, i);
@@ -70,7 +94,7 @@ int main(int argc, char *argv[]) {
 			return 0;
 		}
 	}
-	else if(strncpy(argv[1], "-m", 2)) {
+	else if(strncmp(argv[1], "-m", 2) == 0) {
 		int count[10];
 		int num = atoi(&argv[1][2]);
                 for(i = 0; i < 10; i++)
@@ -103,6 +127,34 @@ int main(int argc, char *argv[]) {
                 return 0;
 
 	}
+	 else if(strcmp(argv[1], "-w") == 0) {
+                char *p;
+                for(i = 1; i <= 10; i++) {
+                        f[i] = open(argv[i+2], O_RDONLY);
+                        size[i] = lseek(f[i], 0, SEEK_END);
+                }
+                for(i = 1; i <= 10; i++) {
+                        a = (char*)malloc(size[i]*sizeof(char));
+                        lseek(f[i], 0, 0);
+                        read(f[i], a, size[i]*sizeof(char));
+                        token = mystrtok_multi(a, s, i);
+                        while( token != NULL ) {
+                                if(p = mystrstr(token, argv[2])) {
+                                        if(isalpha(*(p - 1)) == 0 && isalpha(*(p + strlen(argv[2]))) == 0) {
+                                                if(argc < 5)
+                                                        printf("%s\n", token);
+                                                else
+                                                        printf("%s%s : %s%s\n", KMAG, argv[i+2], KNRM, token);
+                                        }
+                                }
+                                token = mystrtok_multi(NULL, s, i);
+                        }
+                        close(f[i]);
+                        free (a);
+                }
+                return 0;
+
+        }
 	else if(strcmp(argv[1], "-l") == 0 || strcmp(argv[1], "-L") == 0 || strcmp(argv[1], "-il") == 0 || strcmp(argv[1], "-li") == 0 || strcmp(argv[1], "-iL") == 0 || strcmp(argv[1], "-Li") == 0) {
 		for(i = 1; i <= 10; i++) {
         	        f[i] = open(argv[i+2], O_RDONLY);
@@ -284,6 +336,57 @@ int main(int argc, char *argv[]) {
 			free (a);
 		}
 		return 0;
+	}
+	else if(strcmp(argv[1], "-b") == 0) {
+                for(i = 1; i <= 10; i++) {
+                        f[i] = open(argv[i+2], O_RDONLY);
+                        size[i] = lseek(f[i], 0, SEEK_END);
+                }
+                for(i = 1; i <= 10; i++) {
+                        int bytes = 0;
+                        a = (char*)malloc(size[i]*sizeof(char));
+                        lseek(f[i], 0, 0);
+                        read(f[i], a, size[i]*sizeof(char));
+                        token = mystrtok_multi(a, s, i);
+                        while( token != NULL ) {
+                                if(mystrstr( token, argv[2]) != NULL) {
+                                        if(argc < 5)
+                                                printf("%s%d%s:%s%s\n", KGRN, bytes, KBLU, KNRM, token);
+                                        else
+                                                printf("%s%s %s: %s%d %s: %s%s\n", KMAG, argv[i+2], KBLU, KGRN, bytes, KBLU, KNRM, token);
+                                }
+				bytes = bytes + strlen(token) + 1;
+                                token = mystrtok_multi(NULL, s, i);
+                        }
+                        close(f[i]);
+                        free (a);
+                }
+                return 0;
+        }
+	else if(strcmp(argv[1], "-h") == 0 || strcmp(argv[1], "-H") == 0 ) {
+		for(i = 1; i <= 10; i++) {
+                        f[i] = open(argv[i+2], O_RDONLY);
+                        size[i] = lseek(f[i], 0, SEEK_END);
+                }
+                for(i = 1; i <= 10; i++) {
+                        a = (char*)malloc(size[i]*sizeof(char));
+                        lseek(f[i], 0, 0);      
+                        read(f[i], a, size[i]*sizeof(char));
+                        token = mystrtok_multi(a, s, i);
+                        while( token != NULL ) { 
+                                if(mystrstr(token, argv[2]) != NULL) {
+                                        if(strcmp(argv[1], "-h") == 0)
+                                                printf("%s\n", token);
+                                        else
+                                                printf("%s%s : %s%s\n", KMAG, argv[i+2], KNRM, token);
+                                }
+                                token = mystrtok_multi(NULL, s, i);
+                        }
+                        close(f[i]);
+                        free (a);
+                }
+                return 0;
+
 	}
 	else {
 		for(i = 1; i <= 10; i++) {
