@@ -1,4 +1,0 @@
-do -w command
-do -e command
-do -b
-do -A, -B, -C
