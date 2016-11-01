@@ -127,7 +127,47 @@ int main(int argc, char *argv[]) {
                 return 0;
 
 	}
-	 else if(strcmp(argv[1], "-w") == 0) {
+	else if(strncmp(argv[1], "-A", 2) == 0) {
+                int num = atoi(&argv[1][2]);
+		int j = 0;
+                for(i = 1; i <= 10; i++) {
+                        f[i] = open(argv[i+2], O_RDONLY);
+                        size[i] = lseek(f[i], 0, SEEK_END);
+                }
+                for(i = 1; i <= 10; i++) {
+                        a = (char*)malloc(size[i]*sizeof(char));
+                        lseek(f[i], 0, 0);
+                        read(f[i], a, size[i]*sizeof(char));
+                        token = mystrtok_multi(a, s, i);
+                        while( token != NULL ) {
+                                if(mystrstr( token, argv[2]) != NULL) {
+                                        if(argc < 5)
+                                                printf("%s\n", token);
+                                        else
+                                                printf("%s%s : %s%s\n", KMAG, argv[i+2], KNRM, token);
+					for(j = 0; j <= num; j++) {
+						token = mystrtok_multi(NULL, s, i);
+						if(token == NULL)
+							break;
+                                		if(mystrstr( token, argv[2]) != NULL)
+							j = 0;
+						if(argc < 5)
+                                                	printf("%s\n", token);
+                                        	else
+                                                	printf("%s%s : %s%s\n", KMAG, argv[i+2], KNRM, token);
+					}
+
+                                }
+                                token = mystrtok_multi(NULL, s, i);
+                        }
+                        close(f[i]);
+                        free (a);
+                }
+                return 0;
+
+        }
+
+	else if(strcmp(argv[1], "-w") == 0) {
                 char *p;
                 for(i = 1; i <= 10; i++) {
                         f[i] = open(argv[i+2], O_RDONLY);
